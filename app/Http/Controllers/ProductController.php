@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Service\ProductService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index()
     {
         $products = Product::all();
@@ -15,27 +23,19 @@ class ProductController extends Controller
 
     public function new(Request $request)
     {
-        if(!Product::where('name', $request->name)->first())
+        if($this->productService->handleNewProduct($request->name, $request->description))
         {
-            Product::create([
-                'name' => $request->name,
-                'description' => $request->description,
-            ]);
-            return redirect()->route('products.index')->with('status', 'Product saved');
+            return redirect()->route('products.index')->with('status', 'ProductService saved');
         }
-
-        return redirect()->route('products.index')->with('status', 'Product name already exists');
-
+        return redirect()->route('products.index')->with('status', 'ProductService name already exists');
     }
 
     public function delete(Request $request, Product $product)
     {
-        if($product)
+        if($this->productService->handleProductDeleting($product))
         {
-            $product->delete();
-            return redirect()->route('products.index')->with('status', 'Product was deleted');
+            return redirect()->route('products.index')->with('status', 'ProductService was deleted');
         }
-
-        return redirect()->route('products.index')->with('status', 'Product not found');
+        return redirect()->route('products.index')->with('status', 'ProductService not found');
     }
 }
