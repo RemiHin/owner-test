@@ -18,7 +18,8 @@ class ProductController extends Controller
         if(!Product::where('name', $request->name)->first())
         {
             Product::create([
-                'name' => $request->name
+                'name' => $request->name,
+                'description' => $request->description,
             ]);
             return redirect()->route('products.index')->with('status', 'Product saved');
         }
