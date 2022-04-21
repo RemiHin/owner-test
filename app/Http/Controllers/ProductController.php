@@ -16,15 +16,20 @@ class ProductController extends Controller
 
     public function new(Request $request)
     {
-        DB::insert("INSERT INTO products (name) VALUES ('".$request->name."')");
+        if(!Product::where('name', $request->name)->first())
+        {
+            DB::insert("INSERT INTO products (name) VALUES ('".$request->name."')");
+            return redirect()->route('products.index')->with('status', 'Product saved');
+        }
 
-        return redirect('/products')->with('status', 'Product saved');
+        return redirect()->route('products.index')->with('status', 'Product name already exists');
+
     }
 
     public function delete(Request $request)
     {
         DB::delete("DELETE FROM products WHERE id = ".$request->id);
 
-        return redirect('/products')->with('status', 'Product was deleted');
+        return redirect()->route('products.index')->with('status', 'Product was deleted');
     }
 }
