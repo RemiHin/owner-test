@@ -23,8 +23,9 @@ class ProductController extends Controller
 
     public function new(Request $request)
     {
-        if($this->productService->handleNewProduct($request->name, $request->description))
+        if($product = $this->productService->handleNewProduct($request->name, $request->description))
         {
+            $this->productService->handleAddTags($product, $request->tags);
             return redirect()->route('products.index')->with('status', 'ProductService saved');
         }
         return redirect()->route('products.index')->with('status', 'ProductService name already exists');
