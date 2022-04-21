@@ -18,4 +18,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::post('/products/new', [ProductController::class, 'new'])->name('products.new');
-Route::post('/products/delete', [ProductController::class, 'delete'])->name('products.delete');
+Route::post('/products/delete/{product}', [ProductController::class, 'delete'])->name('products.delete');

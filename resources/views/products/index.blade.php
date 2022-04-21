@@ -17,14 +17,13 @@
 
         <h1>Current Products</h1>
 
-        @if (\App\Product::all()->count())
+        @if ($products->count())
         <ul>
-            @foreach (\App\Product::all() as $product)
+            @foreach ($products as $product)
             <li>
-                {!! $product->name !!}
-                <form action="{{ route('products.delete') }}" method="POST">
+                {{ $product->name }}
+                <form action="{{ route('products.delete', ['product' => $product->id]) }}" method="POST">
                     @csrf
-                    <input type="hidden" name="id" value="@php(print $product->id)"/>
                     <button type="submit">delete</button>
                 </form>
             </li>

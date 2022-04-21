@@ -3,22 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Product;
-use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        return view('products.index');
+        $products = Product::all();
+        return view('products.index', ['products' => $products]);
     }
 
     public function new(Request $request)
     {
         if(!Product::where('name', $request->name)->first())
         {
-            DB::insert("INSERT INTO products (name) VALUES ('".$request->name."')");
+            Product::create([
+                'name' => $request->name
+            ]);
             return redirect()->route('products.index')->with('status', 'Product saved');
         }
 
@@ -26,10 +27,14 @@ class ProductController extends Controller
 
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request, Product $product)
     {
-        DB::delete("DELETE FROM products WHERE id = ".$request->id);
+        if($product)
+        {
+            $product->delete();
+            return redirect()->route('products.index')->with('status', 'Product was deleted');
+        }
 
-        return redirect()->route('products.index')->with('status', 'Product was deleted');
+        return redirect()->route('products.index')->with('status', 'Product not found');
     }
 }
